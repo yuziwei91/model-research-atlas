@@ -17,7 +17,7 @@ export async function research(family,page,topic='all',modelId=''){
  }else if(page==='hardware'){
  h+=`<div class="notice">先确认具体代际，再确认检查点格式、实际内核和部署栈。下面是支持证据比较，不是速度或性价比排名。${model?'硬件表保留全家族条目；每行明确其实际覆盖的模型，不能视为当前版本全覆盖。':''}</div><div class="table-wrap"><table class="hardware-table"><thead><tr><th>硬件代际</th><th>精度与内核</th><th>模型支持证据</th><th>软件快照</th><th>边界与出处</th></tr></thead><tbody>${d.platforms.map(p=>`<tr><th scope="row">${esc(p.name)}</th><td>${esc(p.precision)}</td><td>${esc(p.support)}</td><td>${esc(p.stack)}</td><td>${esc(p.boundary)}${refs(p.refs)}</td></tr>`).join('')}</tbody></table></div><h2>公平比较的最低条件</h2><ol class="protocol">${d.protocol.map(p=>`<li>${esc(p)}</li>`).join('')}</ol>`;
  }else{
- h+=`<div class="notice">优先级表示建议验证顺序，不是预计收益排名。当前没有证据支持“Ascend 完全不支持 K3”；明确问题是版本一致性，其他性能项需先测量。</div>`;
+ h+=`<div class="notice">优先级表示建议验证顺序，不是预计收益排名。${esc(d.optimizationNote||'当前没有证据支持“Ascend 完全不支持 K3”；明确问题是版本一致性，其他性能项需先测量。')}</div>`;
  h+=d.optimizations.map(o=>`<section class="panel research-card"><div class="priority-row"><span class="pill">${o.priority}</span><span class="small">${esc(o.status)}</span></div><h2>${esc(o.title)}</h2><p class="small">范围：${esc(o.scope)}</p><dl class="research-pairs">${[['已观察','observation'],['建议动作','proposal'],['验证指标','metric'],['风险 / 约束','risk']].map(([label,k])=>`<dt>${label}</dt><dd>${esc(o[k])}</dd>`).join('')}</dl>${refs(o.refs)}</section>`).join('');
  h+=`<h2>统一实验协议</h2><ol class="protocol">${d.protocol.map(p=>`<li>${esc(p)}</li>`).join('')}</ol>`;
  }

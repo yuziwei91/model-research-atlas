@@ -10,6 +10,25 @@
       "updated": "2026-09-19",
       "modelCount": 18,
       "figureCount": 11
+    },
+    {
+      "id": "glm",
+      "name": "GLM",
+      "publisher": "智谱 Zhipu AI",
+      "description": "从 GLM-5 / GLM-5.2 的 DSA + MoE 主干，到 GLM-5.3-Flash 的 KDA 混合注意力、mHC 超连接与昇腾 NPU 上的 Hybrid HiF8-MXFP8-MXFP4 部署。",
+      "path": "data/families/glm/family.json",
+      "updated": "2026-09-30",
+      "modelCount": 3,
+      "figureCount": 0,
+      "topics": [
+        "三代演进",
+        "混合注意力与 mHC",
+        "昇腾 NPU 部署"
+      ],
+      "counts": [
+        "3 个名称条目",
+        "45 层逐矩阵结构"
+      ]
     }
   ],
   "reports": [

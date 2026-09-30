@@ -1,6 +1,21 @@
 # 模型研究图谱
 
-独立、本地优先的中文模型研究网站。主页并列展示 Kimi 模型家族与 OpenBMB 组织研究；两者按各自的研究范围浏览。无需安装 npm 包或下载权重，浏览器端不依赖 CDN。
+独立、本地优先的中文模型研究网站。主页并列展示 Kimi 与 GLM 两个模型家族，以及 OpenBMB 组织研究；三者按各自的研究范围浏览。无需安装 npm 包或下载权重，浏览器端不依赖 CDN。
+
+## GLM 主线与昇腾 NPU 推理优化
+
+研究日期：2026-09-30。覆盖 GLM-5、GLM-5.2 与 GLM-5.3-Flash 三个条目，全部通过华为 CANN 推理配方 [cann-recipes-infer](https://gitcode.com/cann/cann-recipes-infer) 的固定快照 `96e5813` 研究。
+
+- [家族研究主页](#/family/glm)（本地预览）
+- `data/families/glm/family.json`：版本、技术主题与场景
+- `data/families/glm/glm-5.3-flash-architecture.json`：GLM-5.3-Flash 45 层逐矩阵结构
+- `data/families/glm/hardware.json`：8 个实现专题、2 类平台、7 项待验证优化、21 条固定来源
+
+GLM-5.3-Flash 是 45 层混合注意力模型：34 层 KDA 线性注意力 + 11 层 DSA（全程 NoPE 的吸收式 MLA + k-pool 压缩 indexer），叠加 4 流 mHC 超连接与 288 选 8 MoE，昇腾 950DT 上按模块分配 HiF8 / MXFP8 / MXFP4 三档精度。
+
+结构数据由实现源码中参数的声明形状推导，`scripts/build_glm53_architecture.py` 可重新生成，推导过程写在脚本里。**这不是权重文件头审计**：`payloadBytes` 全部为空。配方 README 的吞吐数字按原样引用并标注为配方自述，**本站未复现，也未运行任何 NPU 性能实验**；「Ascend 优化」页的全部条目都是待验证项，不是已测得的收益。
+
+按配置默认值推导的参数总数为 313,326,811,966，与配方 README 自述的约 306B 相差约一层 MoE；若前 4 层为 Dense 则为 306,203,703,838，与自述一致。该差异在结构页与来源页明确保留，未替厂商选定其一。
 
 ## OpenBMB 主模型与技术演进
 
@@ -44,6 +59,7 @@ python3 scripts/serve.py
 ## 目录与数据流
 
 - `data/catalog.json`：顶层研究目录；`families` 提供动态模型家族，`reports` 提供独立组织研究报告入口。
+- `scripts/build_glm_family.py` / `build_glm_report.py` / `build_glm_hardware.py` / `build_glm53_architecture.py`：GLM 家族数据的生成脚本，全部事实与固定快照来源写在脚本内，可重跑复核。
 - `data/families/<id>/family.json`：家族文案、版本、技术主题、场景、图与附件。
 - `data/families/<id>/report.json`：已审核的章节 HTML，原报告文字完整保留。
 - `*-layers.json`：主线逐层权重审计。

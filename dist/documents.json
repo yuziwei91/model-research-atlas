@@ -1,5 +1,6 @@
 {
   "files": [
+    "assets/glm/GLM-implementation-hardware-ascend.md",
     "assets/kimi/Kimi-K2至K3深度研究报告.md",
     "assets/kimi/Kimi-implementation-hardware-ascend.md",
     "assets/kimi/compute/Kimi-layer-api-report.md",
