@@ -1,0 +1,7 @@
+﻿id,vendor,name,unit,domain,hbmGB,hbmGBps,intraGBps,interGBps,topology,basis,status,refs
+gb300,NVIDIA,GB300 NVL72,GPU,72,288,8000,900,100,NVLink5交换域；外部IB/Ethernet,1.8 TB/s双向/2作单向上限；800Gb/s/8；实效需另乘效率,官方产品规格；未实测,nv-gb300;nv-components
+mi355,AMD,MI355X 八卡域,GPU/OAM,8,288,8000,537.6,,8卡Infinity Fabric全连接；跨节点网络由部署填写,7×153.6/2 GB/s单向注入上限；单peer仅76.8，bisection与拥塞另限,官方产品规格；未实测,amd-mi355;amd-platform
+cm384,Ascend,CloudMatrix384,910C die / 逻辑NPU,768,64,1600,196,25,384封装×2die；UB域内，RoCE域间,论文明确每die单向；不将768die误写768张卡。实际rank暴露核对npu-smi,厂商论文规格；未实测,asc-cm
+rubin,NVIDIA,Vera Rubin NVL72,GPU,72,288,19200,,225,NVLink6；3TB/s/GPU栏未在此推断方向,外网0.45TB/s双向/2；较早3.6TB/s公告与当前表冲突，域内留空待选定规格,当前官方规格，落地软件/供货另验,nv-rubin
+helios,AMD,Helios MI455X,GPU,72,432,23300,1800,,72GPU UALoE单跳全互联,3.6TB/s双向/2；外网配置未填,官方架构规格，落地软件/供货另验,amd-cdna
+atlas950,Ascend,Atlas950 SuperPoD,卡（具体PR/DT待指定）,1024,,,,,灵衢/UB；1024卡实机与8192卡最大范围分列,不把256TB全局编址当HBM；未明确单卡/单双向值均留空,官方展示/范围声明；容量输入待具体SKU,asc-950;asc-roadmap;asc-amct

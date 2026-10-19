@@ -1,0 +1,133 @@
+{
+  "schema": "independent-supernode-audit-v1",
+  "signed_utc": "2026-10-05T04:09:04.965294+00:00",
+  "audited_commit": "996b3a5e319451703d9e1495079f20cb2261c709",
+  "snapshot_manifest_sha256": "644ffff95adbc5aedbdffc1ebafdd806b4f327277cc28dfcdc197ed0467568c5",
+  "engine_sha256": "63a4af7c08f15983db427b6df0e6da48f4aa48d3c0beb1f71252e21d8f47bd06",
+  "result": "passed_with_explicit_scope_limits",
+  "unresolved_blockers": [],
+  "closed_issue_groups": 14,
+  "coverage": {
+    "static_scenarios": 6210,
+    "arithmetic_comparisons": 536930,
+    "state_cases": 3200,
+    "state_assertions": 28800,
+    "boundary_checks": 301,
+    "unit_checks": 176,
+    "fixed_asset_files": 187,
+    "zip_members": 174,
+    "model_supplements": 156,
+    "sources_registered": 26,
+    "formula_rows": 29,
+    "real_UI_paths": 11,
+    "actual_UI_display_numeric_comparisons": 30,
+    "actual_download_rows": 133,
+    "actual_download_model_fields": 31,
+    "actual_download_input_fields": 55,
+    "actual_download_result_fields": 46,
+    "actual_download_independent_result_checks": 22,
+    "local_HTTP_hash_matches": 182
+  },
+  "real_UI_operator": "root coordinator, independent of maker, normal Safari CUA in a new window",
+  "UI_provenance": "Root collaboration observation record; independent numeric cross-check and actual downloaded CSV. Raw AX/screenshots not archived.",
+  "nonempty_stage_array_limit": "Actual exported edited-placement scenario correctly has cacheStageCounts=null. Nonempty object arrays checked through independent in-memory DOM exporter tests, not this actual download.",
+  "limitations": [
+    "No GPU/NPU execution, full-model backend validation, convergence/quality, allocator peak or throughput measurement.",
+    "5T and10T are hypothetical parameterized scenarios;155 other model supplements preserve gaps.",
+    "9 weight formats and5 compute formats are budget choices, not blanket backend support.",
+    "Actual graph mapping, offload, CP, network congestion and omitted operators remain deployment-specific.",
+    "Public GET/hash must be recorded separately after release."
+  ],
+  "evidence_files": [
+    {
+      "path": "FINAL-supernode-audit.md",
+      "sha256": "58c1fc71b0df8ce6e4a667d73cb88316bc464f7542985fb7f3cd4c0b4438347b",
+      "bytes": 8715
+    },
+    {
+      "path": "findings-register.json",
+      "sha256": "329149b724fe452b33035e5add4cede51d118c982fdf269ede818a7fb8fdfc72",
+      "bytes": 69870
+    },
+    {
+      "path": "findings-register.csv",
+      "sha256": "a7097c74badc652222e549bccced867cbf0bcb58b3f05bb657dc46f4d6db30c8",
+      "bytes": 3562
+    },
+    {
+      "path": "audit-matrix.json",
+      "sha256": "dbcb8695800086448c6ee34c50a9e6fe5b577154612c868026cc72b39429854d",
+      "bytes": 27952
+    },
+    {
+      "path": "candidate-recalculation.json",
+      "sha256": "52c69c0acc9c4bdbe2664e7bf0120667e9fcccdd56ed35fb35ddbe9ae2a05cc5",
+      "bytes": 1621733
+    },
+    {
+      "path": "candidate-fix-recheck.json",
+      "sha256": "d4277de70384d7b06a4cf1e46245c1fcda559f98dfc1caa15a22e89503054a21",
+      "bytes": 44634
+    },
+    {
+      "path": "state-conservation-results.json",
+      "sha256": "ffabf08694d2b7d76c12a78f2c9223dff7dd48dea6319fd61f1081d8196350d0",
+      "bytes": 280
+    },
+    {
+      "path": "unit-invariants.json",
+      "sha256": "d87885a38fcafc95b57f9ff59129582154c3becd063e5f61c0c1010f6d38b77a",
+      "bytes": 27334
+    },
+    {
+      "path": "asset-check.json",
+      "sha256": "6824ba8895a0fa7b3c999c4a8e401178cf8de299894172dc20ae4d9a884d8dfe",
+      "bytes": 136189
+    },
+    {
+      "path": "http-preview-check.json",
+      "sha256": "56c950023e09822d4b1c5f0a3af7b1e70e6ee1db5097b6eafd4521b43abd6891",
+      "bytes": 79558
+    },
+    {
+      "path": "ui-checklist.json",
+      "sha256": "7ce51ee161753453255a806a81fb9c08e5c785b359079df54d0b111dd415020b",
+      "bytes": 7853
+    },
+    {
+      "path": "ui/root-ui-observations.md",
+      "sha256": "5c2c552a03a3e9e79d6090a16fb9d35e3c638887627453ed7b38c33a58c1795e",
+      "bytes": 3045
+    },
+    {
+      "path": "ui/root-observations-part1.json",
+      "sha256": "4df60bf139a1dfa27e9885b1f32a68bd25e02346bbc3c99a5f6d1608e22682ec",
+      "bytes": 4555
+    },
+    {
+      "path": "ui/root-observations-part2.json",
+      "sha256": "12f9dba1bd000675b30d18dfb96e57dc7b66ba0aec05a9030bdaeabd33cc3487",
+      "bytes": 3616
+    },
+    {
+      "path": "ui/actual-download-check.json",
+      "sha256": "78c4c66e781a080a819a5053a72005d8d0e9320da65b0cc5228f658a577f3bf8",
+      "bytes": 29545
+    },
+    {
+      "path": "browser-export.csv",
+      "sha256": "43b5c0c7adc8892b813ec4af41dd2b96b82e33e96ca4477eda86a892778b42d1",
+      "bytes": 8998
+    },
+    {
+      "path": "hardware/incremental-20261003T015209Z.json",
+      "sha256": "79d616c3594929114198f04bde40a589e026ca68c47508346e4c4564cb99dd3c",
+      "bytes": 31428
+    },
+    {
+      "path": "training/increment-20261003T012035Z.json",
+      "sha256": "3b0723c8300f2dbd592a3edf05f0d3752e7ac15454e8bc84250ab538f89763c1",
+      "bytes": 55396
+    }
+  ]
+}

@@ -17,7 +17,7 @@
       "publisher": "智谱 Zhipu AI",
       "description": "从 GLM-5 / GLM-5.2 的 DSA + MoE 主干，到 GLM-5.3-Flash 的 KDA 混合注意力、mHC 超连接与昇腾 NPU 上的 Hybrid HiF8-MXFP8-MXFP4 部署。",
       "path": "data/families/glm/family.json",
-      "updated": "2026-09-30",
+      "updated": "2026-10-19",
       "modelCount": 3,
       "figureCount": 0,
       "topics": [
@@ -28,6 +28,26 @@
       "counts": [
         "3 个名称条目",
         "45 层逐矩阵结构"
+      ]
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "publisher": "DeepSeek",
+      "description": "MLA/DSA、V4 压缩注意力，以及 V4.1 Flash 的 CED、CSA2、Engram、原生视觉与 DSpark。",
+      "path": "data/families/deepseek/family.json",
+      "updated": "2026-10-08",
+      "modelCount": 22,
+      "figureCount": 4,
+      "topics": [
+        "MLA / DSA / CSA / HCA",
+        "R1 与 Distill",
+        "Ascend 源码研究"
+      ],
+      "counts": [
+        "22 个代表 checkpoint",
+        "21 版文件头审计；V4.1 配置/源码",
+        "CED / CSA2 / Engram / 视觉 / DSpark"
       ]
     }
   ],
@@ -40,6 +60,25 @@
       "path": "reports/openbmb/",
       "updated": "2026-09-23",
       "repositoryCount": 88
+    },
+    {
+      "id": "future-models",
+      "name": "未来模型分析",
+      "publisher": "跨模型与论文研究",
+      "kind": "技术前瞻",
+      "description": "未来 12—24 个月的五项布局：通信参与训练的 MoE、漂移预测与低精度纠错、可伸缩记忆、跨通道曲率更新与计算收益控制。区分已有证据和未来假设，说明预研产物、扩大投入与停止条件。",
+      "path": "reports/future-models/",
+      "updated": "2026-10-09",
+      "topics": [
+        "通信与精度共同设计",
+        "未来记忆与计算结构",
+        "预研任务与停止条件"
+      ],
+      "counts": [
+        "5 项未来布局",
+        "42 章分类参考"
+      ]
     }
-  ]
+  ],
+  "comparisonPath": "data/analysis/cross-family.json"
 }

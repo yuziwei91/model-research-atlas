@@ -1,0 +1,8 @@
+﻿id,name,trainable,memory,limit
+pretrain,预训练,全部模型权重,BF16参数+梯度+FP32 master/Adam；低位GEMM副本另外计,训练序列、全局batch、数据及学习率；原发布MXFP4不能还原原BF16训练起点
+continue,持续训练,通常全部权重,同全参状态；恢复optimizer/RNG/dataloader状态,加载原量化权重再训练会改变起点，需注明恢复/反量化策略
+fullft,全参微调,明确需训练的全参集合,与预训练同状态结构，数据量少不自动减少模型状态,冻结视觉/部分模块需重算参数集合；本K3容量参考含全模型
+lora,LoRA,仅目标adapter,冻结BF16底座 + adapter16 B参考状态；仍有底座前向及反传激活,rank与目标层决定adapter量；本默认1B仅压力假设，不是K3已训练adapter
+qlora,QLoRA/低位底座PEFT,仅目标adapter,冻结4bit底座 + 高精度adapter与反量化工作区,NF4与MXFP4/INT4不是同格式；本模型存储预算不能证明后端可执行
+prefill,推理 Prefill,不训练,权重+新增KV/KDA状态+本批prefill激活/临时区,TTFT包括队列、tokenize、视觉、prefill、首decode、PD迁移；模型只算组件
+decode,推理 Decode,不训练,权重+历史KV+KDA固定状态+调度工作区,TPOT与吞吐需结合并发、路由稀疏性、通信启动与质量，不能由峰值乘卡数保证

@@ -1,0 +1,132 @@
+[
+  {
+    "priority": "P0",
+    "phase": "全阶段",
+    "target": "固定可运行基线",
+    "condition": "Ascend设备代际、CANN/PyTorch-NPU/vLLM或训练框架、checkpoint与转换版本同时固定",
+    "action": "先跑BF16可对照层；核对SiTU/NoPE/KDA/AttnRes/视觉及条件分派",
+    "metrics": "加载成功率、logits/状态误差、端到端质量、失败shape清单",
+    "limit": "不以950精度能力外推910C，不把K3推理教程当训练支持",
+    "refs": "asc-pinned;asc-k3;asc-amct"
+  },
+  {
+    "priority": "P0",
+    "phase": "全参训练 BF16/FP8/FP4",
+    "target": "训练图及精度可用性",
+    "condition": "需要backward、optimizer、分布式保存/恢复和实际K3训练代码",
+    "action": "逐模块前后向验证；矩阵低位时保留高精度累计/主权重，记录scale更新",
+    "metrics": "梯度误差、loss曲线、溢出率、resume一致性",
+    "limit": "未取得K3在Ascend全参FP8/FP4收敛证据，不声明已支持",
+    "refs": "k3-impl;zero;nv-fp4;asc-amct"
+  },
+  {
+    "priority": "P0",
+    "phase": "W8A8/W4A8 推理",
+    "target": "量化转换与质量",
+    "condition": "固定vLLM-Ascend W4A8实现只接受per-channel权重，显式拒绝group_size>0；与本预算group128格式不可直接等同。910C使用经转换的配方；950另验原生格式",
+    "action": "先验证校准集与长上下文质量，再比较quant/dequant/scale/layout总成本",
+    "metrics": "精度评测、权重峰值、加载时间、GEMM与量化各自耗时",
+    "limit": "不能把MXFP4检查点直接改标签成INT4；相同比特不等价",
+    "refs": "asc-k3;asc-quant;asc-cm"
+  },
+  {
+    "priority": "P0",
+    "phase": "训练 / 推理 EP",
+    "target": "拓扑与rank分组",
+    "condition": "EP all-to-all与TP group尽量位于可提供所需带宽的域；DP同步可以跨域但需实测",
+    "action": "导出rank到die/封装/节点/域映射；实测dispatch/combine及allreduce",
+    "metrics": "每rank字节、有效单向GB/s、p50/p99 collective时间、跨域比例",
+    "limit": "不能以总域带宽除卡数代替单连接/双截带宽；910C die与封装分开",
+    "refs": "asc-cm;megatron-moe"
+  },
+  {
+    "priority": "P1",
+    "phase": "MoE 训练 / Prefill",
+    "target": "dispatch/combine与Grouped GEMM重叠",
+    "condition": "足够token/专家负载与合法缓冲生命周期；训练额外反向路由",
+    "action": "在profile显示关键路径时，尝试MC2/融合通信及分桶，不直接增加EP",
+    "metrics": "路由偏斜、专家负载p99、padding/drop率、通信暴露时间、梯度正确性",
+    "limit": "大EP小token会降低矩阵利用率；重叠缓冲增加HBM",
+    "refs": "asc-cm;asc-pinned;megatron-moe"
+  },
+  {
+    "priority": "P1",
+    "phase": "MoE Decode 4/8bit",
+    "target": "路由与小矩阵尾部",
+    "condition": "低batch、小专家M；latent宽3584不同于残差7168",
+    "action": "按M/N/K及dtype分桶，核对SiTU/量化/归一化/投影融合分支",
+    "metrics": "token间隔p99、算子启动数、dequant占比、HBM实际字节",
+    "limit": "已有融合不等于全部shape命中；不编造加速比例",
+    "refs": "asc-pinned;asc-quant"
+  },
+  {
+    "priority": "P1",
+    "phase": "训练",
+    "target": "FSDP/ZeRO与PP峰值",
+    "condition": "有DP/EDP复制组；ZeRO3需要临时gather最大层，EP分片不能重复算",
+    "action": "先统计最大rank状态，再比较重计算、stage2/3和PP层划分",
+    "metrics": "峰值HBM、allgather/RS字节、step time、气泡占比",
+    "limit": "K3层类型交替且93不可任意等分；PP按最重stage而非平均",
+    "refs": "zero;megatron"
+  },
+  {
+    "priority": "P1",
+    "phase": "LoRA / QLoRA",
+    "target": "冻结底座与adapter覆盖",
+    "condition": "明确r和attention/shared/routed/vision目标模块",
+    "action": "检查冻结参数无optimizer state；量化反传与adapter分布跨专家单独验",
+    "metrics": "可训练参数计数、底座意外梯度、HBM、loss/质量",
+    "limit": "paged optimizer将HBM压力转移到CPU/链路；仍有底座激活与反传",
+    "refs": "lora;qlora;zero"
+  },
+  {
+    "priority": "P1",
+    "phase": "Prefill / Decode",
+    "target": "KV与KDA状态",
+    "condition": "缓存布局/精度要有后端支持；混合模型同时有线性与历史项",
+    "action": "按实际PP分层取最重stage；分开计HF展开MLA30720、vLLM latent576或fp8_ds_mla专用656B布局、KDA矩阵及conv、分页余量；量化cache前测误差",
+    "metrics": "每序列增量HBM、长上下文误差、KV命中/迁移量、OOM边界",
+    "limit": "KDA不是全模型常数缓存；权重4bit不意味着KV或KDA状态4bit",
+    "refs": "k3-config;k3-impl;asc-kda"
+  },
+  {
+    "priority": "P1",
+    "phase": "Prefill",
+    "target": "chunk KDA/MLA与视觉峰值",
+    "condition": "按文本tokens/视觉patch数/并发分桶",
+    "action": "chunked prefill与视觉encoder独立profile，避免瞬时工作区压垮decode",
+    "metrics": "TTFT分解、峰值HBM、chunk边界状态误差",
+    "limit": "减小chunk可能增加启动次数和TTFT，需连同TPOT评估",
+    "refs": "asc-kda;asc-k3"
+  },
+  {
+    "priority": "P2",
+    "phase": "Decode",
+    "target": "图执行与CPU调度",
+    "condition": "稳定shape覆盖，支持相应graph模式",
+    "action": "比较eager/图回放，记录重新编译、capture内存与队列等待",
+    "metrics": "host gaps、recompile数、p99 TPOT、capture失败率",
+    "limit": "动态batch/缓存/多模态可能触发回退；不能只看kernel时间",
+    "refs": "asc-k3"
+  },
+  {
+    "priority": "P2",
+    "phase": "PD分离 / 跨超节点",
+    "target": "迁移与链路成本",
+    "condition": "实际PD协议支持KDA状态及KV；带宽与拥塞可测",
+    "action": "增加KV+KDA迁移模型，按SLO选择共置或分离，不默认分离更快",
+    "metrics": "迁移字节/时延、排队、端到端TTFT、网络尾延迟",
+    "limit": "序列变长时迁移可能抵消计算收益；量化迁移含scale与转换",
+    "refs": "asc-cm;asc-k3"
+  },
+  {
+    "priority": "P2",
+    "phase": "训练 / 大模型加载",
+    "target": "检查点、CPU/NVMe与冗余",
+    "condition": "磁盘/CPU内存/网络及复本另有预算",
+    "action": "记录sharded save、恢复时间、优化器写出和故障恢复副本",
+    "metrics": "checkpoint秒数、step暂停、CPU峰值、存储吞吐",
+    "limit": "本HBM情景未含CPU/NVMe硬件容量，不作为完整采购单",
+    "refs": "zero"
+  }
+]

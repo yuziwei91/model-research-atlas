@@ -1,0 +1,51 @@
+[
+  {
+    "id": "pretrain",
+    "name": "预训练",
+    "trainable": "全部模型权重",
+    "memory": "BF16参数+梯度+FP32 master/Adam；低位GEMM副本另外计",
+    "limit": "训练序列、全局batch、数据及学习率；原发布MXFP4不能还原原BF16训练起点"
+  },
+  {
+    "id": "continue",
+    "name": "持续训练",
+    "trainable": "通常全部权重",
+    "memory": "同全参状态；恢复optimizer/RNG/dataloader状态",
+    "limit": "加载原量化权重再训练会改变起点，需注明恢复/反量化策略"
+  },
+  {
+    "id": "fullft",
+    "name": "全参微调",
+    "trainable": "明确需训练的全参集合",
+    "memory": "与预训练同状态结构，数据量少不自动减少模型状态",
+    "limit": "冻结视觉/部分模块需重算参数集合；本K3容量参考含全模型"
+  },
+  {
+    "id": "lora",
+    "name": "LoRA",
+    "trainable": "仅目标adapter",
+    "memory": "冻结BF16底座 + adapter16 B参考状态；仍有底座前向及反传激活",
+    "limit": "rank与目标层决定adapter量；本默认1B仅压力假设，不是K3已训练adapter"
+  },
+  {
+    "id": "qlora",
+    "name": "QLoRA/低位底座PEFT",
+    "trainable": "仅目标adapter",
+    "memory": "冻结4bit底座 + 高精度adapter与反量化工作区",
+    "limit": "NF4与MXFP4/INT4不是同格式；本模型存储预算不能证明后端可执行"
+  },
+  {
+    "id": "prefill",
+    "name": "推理 Prefill",
+    "trainable": "不训练",
+    "memory": "权重+新增KV/KDA状态+本批prefill激活/临时区",
+    "limit": "TTFT包括队列、tokenize、视觉、prefill、首decode、PD迁移；模型只算组件"
+  },
+  {
+    "id": "decode",
+    "name": "推理 Decode",
+    "trainable": "不训练",
+    "memory": "权重+历史KV+KDA固定状态+调度工作区",
+    "limit": "TPOT与吞吐需结合并发、路由稀疏性、通信启动与质量，不能由峰值乘卡数保证"
+  }
+]

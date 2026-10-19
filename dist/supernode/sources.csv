@@ -1,0 +1,27 @@
+﻿id,title,url,checked,evidence
+k3-config,K3 固定官方配置,https://huggingface.co/moonshotai/Kimi-K3/blob/f831ab66814297da540d832a5235f8e904f29d06/config.json,2026-10-01,固定 revision；93 层，24 MLA、69 KDA，896 专家、top16，MXFP4 group32；量化排除 attention/shared/vision 等
+k3-audit,已审 K3 权重文件头汇总,https://github.com/limjiunnbin/model-research-atlas/blob/6613c6f584ab41eec0eed8c4c3981032595b66e5/data/families/kimi/k3-layers.json,2026-10-01,已独立审查的 96 分片文件头；逻辑参数与物理存储分开。不是完整权重加载
+k3-impl,K3 官方参考实现,https://huggingface.co/moonshotai/Kimi-K3/blob/f831ab66814297da540d832a5235f8e904f29d06/modeling_kimi_linear.py,2026-10-01,KDA/MLA/latent MoE；缓存公式属于条件推导，实际 backend 可改变布局
+vllm-k3-mla,vLLM K3 NVIDIA MLA cache implementation,https://github.com/vllm-project/vllm/blob/36229e1337ae0e44e60075a11ebfde210c11d706/vllm/models/kimi_k3/nvidia/mla.py,2026-10-01,固定源码快照；吸收kv_b_proj并有512+64=576 latent元素布局；fp8_ds_mla分支另用656 B/token/layer专用cache布局。仅此backend路径，不代表Ascend或HF cache布局
+nv-gb300,NVIDIA GB300 NVL72 产品规格,https://www.nvidia.com/en-us/data-center/gb300-nvl72/,2026-10-01,72 GPU 域；800 Gb/s/GPU 外网；Tensor Core 表默认稀疏，不直接作为稠密训练峰值
+nv-components,NVIDIA GB300 系统组件,https://docs.nvidia.com/enterprise-reference-architectures/nvl72-ai-factory/latest/components.html,2026-10-01,每 GPU 288 GB，NVLink5；系统内存不等于单 GPU 可用内存
+nv-rubin,NVIDIA Vera Rubin NVL72 当前规格,https://www.nvidia.com/en-us/data-center/vera-rubin-nvl72/,2026-10-01,当前表：72 GPU，288 GB/GPU，19.2 TB/s HBM，3 TB/s NVLink/GPU；与早期博客 3.6 TB/s 不同，不混用。规格不是 K3 验收
+nv-te,Transformer Engine 精度支持矩阵,https://nvidia.github.io/TransformerEngine/support_matrix.html,2026-10-01,访问版本 2.21.0.dev0：Hopper FP8，Blackwell DC MXFP8/NVFP4；CUDA及compute capability约束
+nv-fp4,Transformer Engine NVFP4 recipe,https://docs.nvidia.com/deeplearning/transformer-engine/features/low_precision_training/nvfp4/nvfp4.html,2026-10-01,block16 E4M3 scale 与全张量 FP32 scale；低精度训练 recipe 不等于所有状态为4bit
+amd-mi355,AMD MI355X 产品规格,https://www.amd.com/en/products/accelerators/instinct/mi350/mi355x.html,2026-10-01,288 GB，8 TB/s，CDNA4，MXFP4；link带宽与聚合带宽不同
+amd-platform,AMD MI355X 八卡平台,https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/product-briefs/amd-instinct-miI355x-platform-brochure.pdf,2026-10-01,8 OAM全连接；每对153.6 GB/s双向，不是每卡单向153.6
+amd-cdna,AMD CDNA 代际与 Helios,https://www.amd.com/en/technologies/cdna.html,2026-10-01,CDNA3/4/5数据类型分列；MI455X 72 GPU UALoE，432 GB/GPU，23.3 TB/s HBM，3.6 TB/s双向scale-up；实际供货/软件组合另验
+asc-cm,Huawei/SiliconFlow CloudMatrix384 论文,https://arxiv.org/html/2506.12708v2,2026-10-01,384封装/768die；910C 每die64 GB、1.6 TB/s、UB196 GB/s单向、RDMA200 Gb/s单向。论文厂商测试不是本项目实测
+asc-950,华为 Atlas950 实机展示（2026-07）,https://www.huawei.com/cn/news/2026/7/atlas-950-superpod,2026-10-01,1024卡展示、256TB全局编址、FP8/FP4；全局编址不能直接除卡数当HBM。单卡本研究不填猜测值
+asc-roadmap,华为 Atlas950 最大互联范围,https://www.huawei.com/cn/news/2026/3/mwc-superpod-computing,2026-10-01,正文日期2026-02-28（MWC26）；8192卡最大互联口径，与7月1024卡实机展示范围分列
+asc-amct,CANN9.1 AMCT 量化工作流及类型约束,https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/910/devaids/amct/atlasamct_16_0049.html,2026-10-01,已取得HTML全文。文中同时列出HiF8/FP8/MXFP8/MXFP4/FP4仅950PR/DT、当前版本仅INT8/INT4；属于文档内范围/版本冲突。Linear表又给出条件格式与shape/scale限制；不得据此宣称K3或全参训练支持
+asc-k3,vLLM-Ascend K3 当前教程,https://docs.vllm.ai/projects/ascend/en/main/tutorials/models/Kimi-K3.html,2026-10-01,main教程基于vLLM0.27.1；Eco-Tech W4A8、4台A3/每台16逻辑NPU、DP4 TP16 EP64；服务配方非训练证明
+asc-pinned,vLLM-Ascend 已核验实现快照,https://github.com/vllm-project/vllm-ascend/blob/e139b7d573d3769fd1407d5027d7d4831f5469f0/vllm_ascend/models/kimi_k3.py,2026-10-01,SiTU、latent MoE、AttnRes、视觉分支；与当前教程不自动视为兼容软件栈
+asc-quant,Ascend W4A8 实现快照,https://github.com/vllm-project/vllm-ascend/blob/e139b7d573d3769fd1407d5027d7d4831f5469f0/vllm_ascend/quantization/methods/w4a8/w4a8.py,2026-10-01,量化方法与加载布局；存在代码不能证明所有设备/形状均可用
+asc-kda,Ascend KDA 实现快照,https://github.com/vllm-project/vllm-ascend/blob/e139b7d573d3769fd1407d5027d7d4831f5469f0/vllm_ascend/ops/kimi_kda.py,2026-10-01,prefill chunk与decode recurrent分支；核查数值与状态误差
+zero,DeepSpeed ZeRO3 文档,https://deepspeed.readthedocs.io/en/latest/zero3.html,2026-10-01,stage1优化器，stage2梯度，stage3权重；gather缓冲/层峰值和offload单独处理
+zero-paper,ZeRO 论文,https://arxiv.org/abs/1910.02054,2026-10-01,混合精度Adam模型状态与分片；不是具体K3执行证明
+megatron,Megatron 并行策略,https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/parallelism-guide.html,2026-10-01,TP/PP/DP/CP/SP/EP组合；软件的实际rank映射需单独核对
+megatron-moe,Megatron MoE 并行,https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/moe.html,2026-10-01,EP与TP及SP约束、expert tensor parallel、router负载/通信；不能把所有并行度直接相乘
+lora,LoRA 原始论文,https://arxiv.org/abs/2106.09685,2026-10-01,冻结底座，训练低秩增量；P_adapter=sum r(d_in+d_out)，需明确目标层
+qlora,QLoRA 原始论文,https://arxiv.org/abs/2305.14314,2026-10-01,冻结4bit底座+高精度计算/adapter；NF4、double quantization、paged optimizer。不是4bit全参训练

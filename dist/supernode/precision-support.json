@@ -1,0 +1,82 @@
+[
+  {
+    "format": "BF16",
+    "hardware": "全部三平台参考",
+    "arithmetic": "W16A16；梯度/主权重/优化器可更高精度",
+    "storage": "2 B/参数；无量化scale",
+    "limit": "预训练/持续训练/全参微调基线；K3训练软件与原始高精度checkpoint另验",
+    "refs": "nv-te;amd-cdna;asc-cm"
+  },
+  {
+    "format": "FP8 E4M3",
+    "hardware": "Hopper/Blackwell；CDNA3/4/5；950按算子及版本",
+    "arithmetic": "IEEE-like E4M3浮点编码；与E5M2、MXFP8分列",
+    "storage": "1 B/值；per-tensor或block scale按recipe另计，此处group128/4B只是代理",
+    "limit": "TE delayed scaling与特定训练recipe有格式/前后向约束；BF16权重/FP32 Adam状态不自动消失",
+    "refs": "nv-te;amd-cdna;asc-amct"
+  },
+  {
+    "format": "FP8 E5M2",
+    "hardware": "按硬件、算子与训练recipe核验",
+    "arithmetic": "E5M2浮点编码；不等于E4M3或MXFP8",
+    "storage": "1 B/值；scale另计，此处group128/4B只是代理",
+    "limit": "不能因FP8统称推断所有算子/前后向均支持E5M2",
+    "refs": "nv-te;amd-cdna"
+  },
+  {
+    "format": "MXFP8",
+    "hardware": "Blackwell TE recipe、CDNA代际、Ascend950PR/DT条件",
+    "arithmetic": "MX block-scaled FP8；E4M3FN、block32 E8M0 scale；不等于延迟缩放FP8",
+    "storage": "1+1/32=1.03125 B/值（一维代理）；矩阵布局/padding另计",
+    "limit": "硬件/版本/shape条件适用；AMCT页面对950与910版本有内部范围冲突，作为条件候选而非K3支持证明",
+    "refs": "nv-te;amd-cdna;asc-amct"
+  },
+  {
+    "format": "INT8",
+    "hardware": "三平台具体GEMM/量化后端条件",
+    "arithmetic": "W8A8或W8A16，独立选择",
+    "storage": "1 B + per-channel/group scale/zero",
+    "limit": "主要给推理条件路径；不默认有INT8全参训练；激活校准、异常值处理影响质量",
+    "refs": "nv-gb300;amd-cdna;asc-cm"
+  },
+  {
+    "format": "MXFP4",
+    "hardware": "Blackwell对应服务内核；CDNA4/5；950条件",
+    "arithmetic": "E2M1 block32 + E8M0 scale；W4A16/W4A8要另核实",
+    "storage": "0.5+1/32=0.53125 B/量化参数；按每张量padding；K3只量化特定专家",
+    "limit": "原K3检查点格式；不能当作Ascend910C INT4 W4A8直接兼容，需转换配方",
+    "refs": "k3-config;amd-cdna;asc-amct;asc-k3"
+  },
+  {
+    "format": "NVFP4",
+    "hardware": "Blackwell DC TE完整recipe；Rubin规格；其他平台不默认二进制兼容",
+    "arithmetic": "E2M1 block16 + E4M3局部scale + FP32全局scale",
+    "storage": "0.5+1/16 B/参数 + 4 B/张量（双scale/转置另计）",
+    "limit": "存在4bit矩阵训练recipe，仍是混合精度；不是所有optimizer/grad/master均4bit，K3收敛未验证",
+    "refs": "nv-fp4;nv-te;nv-rubin"
+  },
+  {
+    "format": "INT4",
+    "hardware": "按INT4解包/反量化/GEMM后端；不以FP4能力替代",
+    "arithmetic": "W4A16冻结低位权重/高精度激活；W4A8再量化激活",
+    "storage": "0.5 B + scale/zero/packing；本情景group128、BF16 scale与2B zero仅是假设",
+    "limit": "910C K3使用转换W4A8已有服务教程；不能推出完整训练支持",
+    "refs": "asc-quant;asc-k3"
+  },
+  {
+    "format": "NF4 / QLoRA",
+    "hardware": "具体框架与设备kernel另验",
+    "arithmetic": "4bit冻结底座，adapter BF16，计算反量化",
+    "storage": "0.5 B + codebook/scales/double-quant metadata；不是MXFP4",
+    "limit": "本计算器将0.5B/值+2B/group64 scale作为预算假设；codebook、实际scale dtype及double-quant元数据不完整，不等于完整QLoRA格式",
+    "refs": "qlora;lora"
+  },
+  {
+    "format": "KV / KDA",
+    "hardware": "与权重精度独立",
+    "arithmetic": "KV BF16/FP8/INT8按engine；KDA矩阵状态通常更高精度",
+    "storage": "KV scale/page padding另列；KDA FP32默认假设",
+    "limit": "W4不代表KV4；训练不分配推理历史cache；GQA不可套K3混合缓存",
+    "refs": "k3-impl;vllm-k3-mla;asc-k3"
+  }
+]
