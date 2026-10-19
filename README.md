@@ -4,18 +4,19 @@
 
 ## GLM 主线与昇腾 NPU 推理优化
 
-研究日期：2026-09-30。覆盖 GLM-5、GLM-5.2 与 GLM-5.3-Flash 三个条目，全部通过华为 CANN 推理配方 [cann-recipes-infer](https://gitcode.com/cann/cann-recipes-infer) 的固定快照 `96e5813` 研究。
+研究日期：2026-10-19。覆盖 GLM-5、GLM-5.2 与 GLM-5.3-Flash 三个条目，实现与部署通过华为 CANN 推理配方 [cann-recipes-infer](https://gitcode.com/cann/cann-recipes-infer) 的固定快照 `3b36eea` 研究；GLM-5.3-Flash 的结构另与智谱发布的 `config.json` 逐项核对。
 
 - [家族研究主页](#/family/glm)（本地预览）
 - `data/families/glm/family.json`：版本、技术主题与场景
 - `data/families/glm/glm-5.3-flash-architecture.json`：GLM-5.3-Flash 45 层逐矩阵结构
-- `data/families/glm/hardware.json`：8 个实现专题、2 类平台、7 项待验证优化、21 条固定来源
+- `data/families/glm/hardware.json`：9 个实现专题、2 类平台、7 项待验证优化、24 条固定来源
+- `data/families/glm/configs/GLM-5.3-Flash-config.json`：智谱发布的 config.json 快照（结构事实的官方依据）
 
 GLM-5.3-Flash 是 45 层混合注意力模型：34 层 KDA 线性注意力 + 11 层 DSA（全程 NoPE 的吸收式 MLA + k-pool 压缩 indexer），叠加 4 流 mHC 超连接与 288 选 8 MoE，昇腾 950DT 上按模块分配 HiF8 / MXFP8 / MXFP4 三档精度。
 
 结构数据由实现源码中参数的声明形状推导，`scripts/build_glm53_architecture.py` 可重新生成，推导过程写在脚本里。**这不是权重文件头审计**：`payloadBytes` 全部为空。配方 README 的吞吐数字按原样引用并标注为配方自述，**本站未复现，也未运行任何 NPU 性能实验**；「Ascend 优化」页的全部条目都是待验证项，不是已测得的收益。
 
-按配置默认值推导的参数总数为 313,326,811,966，与配方 README 自述的约 306B 相差约一层 MoE；若前 4 层为 Dense 则为 306,203,703,838，与自述一致。该差异在结构页与来源页明确保留，未替厂商选定其一。
+结构已与官方 `config.json` 核对一致：`first_k_dense_replace=3`、`full_attn_layers=[3,7,…,43]`、前 3 层 Dense，实现默认值未被覆盖。据此推导的解码主干参数为 313,326,811,966（不含 24 层视觉塔与 1 个 MTP 层），与配方 README 自述的约 306B 不符，仓库未给出推导过程，本站保留差异不做消解。
 
 ## OpenBMB 主模型与技术演进
 
@@ -104,6 +105,6 @@ GitHub Actions 验证数据后将 `dist/` 发布到 GitHub Pages；所有资源�
 
 ## 独立模型 Excel 下载中心
 
-入口 `model-documents.html`。156个具体模型/版本各有独立XLSX、算子CSV、参数CSV及在线预览，支持搜索与家族/覆盖筛选。122个条目有配置层展开；34个资料缺口条目明确标识，不能算逐层完成。K3增加模板对照sheet、逐单元格CSV与可筛选差异预览。模板原文件未发布、未覆盖。
+入口 `model-documents.html`。159个具体模型/版本各有独立XLSX、算子CSV、参数CSV及在线预览，支持搜索与家族/覆盖筛选。123个条目有配置层展开；36个资料缺口条目明确标识，不能算逐层完成。GLM-5.3-Flash 的1372行逐矩阵算子表中，duration/计算利用率/mte/scalar 四列全部标为未实测——多卡 HiF8 配方没有提交任何 profiling 数据；GLM-5 与 GLM-5.2 记为资料缺口。K3增加模板对照sheet、逐单元格CSV与可筛选差异预览。模板原文件未发布、未覆盖。
 
 独立数据与来源审查完成；缺口与未实测项仍明确保留。审查基线 `6613c6f584ab41eec0eed8c4c3981032595b66e5`，已关闭A01–A30；34配置缺口、K3的1932项待核验、HerculesBench证据不足及设备未实测不在完成声明内。每份保留“算子表”“模型参数”以及原21列。S为verify长度，B/S/TP/EP是场景输入；配置层包括可选模块，不能直接等同实际运行次数。配置/数学推导、源码路径、权重存储与设备实测分别记录，未实测性能不填猜测值。运行 `python3 scripts/validate_model_documents.py` 检查文件哈希、CSV行数、ZIP及K3语言93层覆盖。
